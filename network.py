@@ -1,27 +1,8 @@
-"""network2.py
-~~~~~~~~~~~~~~
-
-An improved version of network.py, implementing the stochastic
-gradient descent learning algorithm for a feedforward neural network.
-Improvements include the addition of the cross-entropy cost function,
-regularization, and better initialization of network weights.  Note
-that I have focused on making the code simple, easily readable, and
-easily modifiable.  It is not optimized, and omits many desirable
-features.
-
-"""
-
-#### Libraries
-# Standard library
 import json
 import random
 import sys
-
-# Third-party libraries
 import numpy as np
 
-
-#### Define the quadratic and cross-entropy cost functions
 
 class QuadraticCost(object):
 
@@ -64,7 +45,6 @@ class CrossEntropyCost(object):
         return (a-y)
 
 
-#### Main Network class
 class Network(object):
 
     def __init__(self, sizes, cost=CrossEntropyCost):
@@ -325,7 +305,6 @@ class Network(object):
         json.dump(data, f)
         f.close()
 
-#### Loading a Network
 def load(filename):
     """Load a neural network from the file ``filename``.  Returns an
     instance of Network.
@@ -340,7 +319,6 @@ def load(filename):
     net.biases = [np.array(b) for b in data["biases"]]
     return net
 
-#### Miscellaneous functions
 def vectorized_result(j):
     """Return a 10-dimensional unit vector with a 1.0 in the j'th position
     and zeroes elsewhere.  This is used to convert a digit (0...9)
