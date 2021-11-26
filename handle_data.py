@@ -7,7 +7,15 @@ import numpy as np
 
 def load_data():
 
-    f = gzip.open('./data/mnist.pkl.gz', 'rb')
+
+    if os.path.exists("./data/mnist_expanded.pkl.gz"):
+        f = gzip.open('./data/mnist_expanded.pkl.gz', 'rb')
+    elif os.path.exists("./data/mnist.pkl.gz"):
+        f = gzip.open('./data/mnist.pkl.gz', 'rb')
+    else:
+        exit()
+
+
     tr_d, va_d, te_d = pickle.load(f, encoding="latin1")
     f.close()
 

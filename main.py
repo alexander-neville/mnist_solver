@@ -32,14 +32,14 @@ def main():
     else:
 
         nn = network.Network([784, 30, 10], cost=network.CrossEntropyCost)
-        nn.SGD(training_data, 5, 10, 0.1, lmbda = 5.0)
+        nn.SGD(training_data, 3, 10, 0.1, lmbda = 5.0)
         nn.save("./data/config.json")
 
     predictions = nn.predict([example[0] for example in test_data[:60]])
     print(predictions)
     display_numbers(test_data)
 
-    print(f"{nn.evaluate(training_data)} / 50000")
+    print(f"{nn.evaluate(training_data)} / 250000")
     print(f"{nn.evaluate(validation_data)} / 10000")
     print(f"{nn.evaluate(test_data)} / 10000")
 
