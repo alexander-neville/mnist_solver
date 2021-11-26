@@ -174,3 +174,33 @@ function ongoingTouchIndexById(idToFind) {
   }
   return -1;    // not found
 }
+
+function predict() {
+    var el = document.getElementById("canvas");
+    var ctx = el.getContext("2d");
+    var matrix = new Array(28);
+    for (let y = 0; y < 28; y++) {
+        var row = new Array(28);
+        for (let x = 0; x < 28; x++)  {
+            // console.log(ctx.getImageData(x*10, y*10, 1, 1).data);
+            row[x] = ctx.getImageData(x*10, y*10, 1, 1).data[3] / 255;
+        }
+        matrix[y] = row;
+    }
+
+    let request = new XMLHttpRequest();
+    request.open("POST", "predict", true);
+    request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    request.responseType = "json";
+    let data = {"image": matrix};
+    console.log(data);
+
+    request.onload = function() {
+
+        var response = request.response;
+        console.log(response)
+
+    }
+
+    request.send(JSON.stringify(data));
+}
