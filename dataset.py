@@ -46,7 +46,6 @@ def load_data():
     f.close()
     return datasets
 
-
 def expand_dataset():
     if not os.path.exists("./data/mnist_expanded.pkl.gz"):
         f = gzip.open("./data/mnist.pkl.gz", 'rb')
@@ -76,3 +75,22 @@ def expand_dataset():
         pickle.dump((expanded_training_data, validation_data, test_data), f)
         f.close()
         print("done!")
+
+def multiply_examples(dataset):
+    expanded_dataset = []
+    for sample in dataset:
+        expanded_dataset.append(sample)
+        image = np.reshape(sample[0], (-1, 28))
+        for d, axis, index_position, index in [
+                (1,  0, "first", 0),
+                (-1, 0, "first", 27),
+                (1,  1, "last",  0),
+                (-1, 1, "last",  27)]:
+            new_img = np.roll(image, d, axis)
+            if index_position == "first": 
+                new_img[index, :] = np.zeros(28)
+            else: 
+                new_img[:, index] = np.zeros(28)
+            expanded_dataset.append([np.reshape(new_img, (784, 1)), sample[1]])
+    random.shuffle(expanded_dataset)
+    return expanded_dataset

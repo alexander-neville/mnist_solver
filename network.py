@@ -208,7 +208,7 @@ class Network(object):
         return total_correct
 
     def predict(self, data):
-        results = [np.argmax(self.feedforward(x)) for x in data]
+        results = [int(np.argmax(self.feedforward(x))) for x in data]
         return results
 
     def total_cost(self, data, lmbda, convert=False):
