@@ -22,7 +22,7 @@ def main():
     else:
 
         nn = network.Network([784, 30, 10], cost=network.CrossEntropyCost)
-        nn.SGD(training_data, 3, 10, 0.1, lmbda = 5.0)
+        nn.train(training_data, 3, 10, 0.1, lmbda = 5.0)
         nn.save("./data/config.json")
 
     # predictions = nn.predict([example[0] for example in test_data[:60]])

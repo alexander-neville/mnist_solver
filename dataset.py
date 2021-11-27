@@ -7,11 +7,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def vectorized_result(j):
+    """Output vector for an integer label"""
     e = np.zeros((10, 1))
     e[j] = 1.0
     return e
 
 def integer_result(j):
+    """Integer label for output vector"""
     e = np.argmax(j)
     return e
 
