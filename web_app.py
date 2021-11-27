@@ -2,9 +2,12 @@ from flask import Flask, session, json, render_template, request, redirect, url_
 import random
 import numpy as np
 from handle_data import display_one_character
+from main import invert_numbers
+import network
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+nn = network.load("./data/config.json")
 
 @app.route('/index')
 @app.route('/')
@@ -15,8 +18,13 @@ def index():
 def process_drawing():
     incoming = request.get_json()
     print(incoming)
-    display_one_character(np.array(incoming["matrix"]))
-    return jsonify({"prediction": random.randint(0,9)})
+    dataset = [[np.reshape(np.array(incoming["matrix"]), (784, 1)), None]]
+    print(dataset)
+    invert_numbers(dataset)
+    inputs = [x[0] for x in dataset]
+    prediction = nn.predict(inputs)[0]
+    print(prediction)
+    return jsonify({"prediction": int(prediction)})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)
