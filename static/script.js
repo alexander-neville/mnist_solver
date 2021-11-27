@@ -57,7 +57,6 @@ function clear_canvas() {
 
 function touch_start_func(evt) {
   evt.preventDefault();
-  log("touchstart");
   console.log("touchstart.");
   var el = document.getElementById("canvas");
   var ctx = el.getContext("2d");
@@ -107,7 +106,6 @@ function touch_move_func(evt) {
 
 function touch_end_func(evt) {
   evt.preventDefault();
-  log("touchend");
   var el = document.getElementById("canvas");
   var ctx = el.getContext("2d");
   var touches = evt.changedTouches;
@@ -140,11 +138,6 @@ function touch_cancle_func(evt) {
     var idx = ongoingTouchIndexById(touches[i].identifier);
     ongoingTouches.splice(idx, 1);  // remove it; we're done
   }
-}
-
-function log(msg) {
-  var p = document.getElementById('log');
-  p.innerHTML = msg + "\n" + p.innerHTML;
 }
 
 function colorForTouch(touch) {
@@ -192,13 +185,14 @@ function predict() {
     request.open("POST", "predict", true);
     request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     request.responseType = "json";
-    let data = {"image": matrix};
+    let data = {"matrix": matrix};
     console.log(data);
 
     request.onload = function() {
 
         var response = request.response;
         console.log(response)
+        document.getElementById('result').innerText = response.prediction;
 
     }
 

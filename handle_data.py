@@ -4,6 +4,12 @@ import gzip
 import os.path
 import random
 import numpy as np
+import matplotlib.pyplot as plt
+
+def display_one_character(character):
+    plt.subplot(1, 1, 1)
+    plt.imshow(character, cmap=plt.get_cmap('gray'))
+    plt.show()
 
 def load_data():
 
