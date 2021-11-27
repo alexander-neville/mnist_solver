@@ -5,6 +5,12 @@ import numpy as np
 from dataset import vectorized_result
 
 
+def sigmoid(z):
+    return 1.0/(1.0+np.exp(-z))
+
+def sigmoid_prime(z):
+    return sigmoid(z)*(1-sigmoid(z))
+
 class QuadraticCost(object):
 
     @staticmethod
@@ -30,57 +36,12 @@ class CrossEntropyCost(object):
 class Network(object):
 
     def __init__(self, sizes, cost=CrossEntropyCost):
-        """The list ``sizes`` contains the number of neurons in the respective
-        layers of the network.  For example, if the list was [2, 3, 1]
-        then it would be a three-layer network, with the first layer
-        containing 2 neurons, the second layer 3 neurons, and the
-        third layer 1 neuron.  The biases and weights for the network
-        are initialized randomly, using
-        ``self.default_weight_initializer`` (see docstring for that
-        method).
-
-        """
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.default_weight_initializer()
-        self.cost=cost
-
-    def default_weight_initializer(self):
-        """Initialize each weight using a Gaussian distribution with mean 0
-        and standard deviation 1 over the square root of the number of
-        weights connecting to the same neuron.  Initialize the biases
-        using a Gaussian distribution with mean 0 and standard
-        deviation 1.
-
-        Note that the first layer is assumed to be an input layer, and
-        by convention we won't set any biases for those neurons, since
-        biases are only ever used in computing the outputs from later
-        layers.
-
-        """
         self.biases = [np.random.randn(y, 1) for y in self.sizes[1:]]
         self.weights = [np.random.randn(y, x)/np.sqrt(x)
                         for x, y in zip(self.sizes[:-1], self.sizes[1:])]
-
-    def large_weight_initializer(self):
-        """Initialize the weights using a Gaussian distribution with mean 0
-        and standard deviation 1.  Initialize the biases using a
-        Gaussian distribution with mean 0 and standard deviation 1.
-
-        Note that the first layer is assumed to be an input layer, and
-        by convention we won't set any biases for those neurons, since
-        biases are only ever used in computing the outputs from later
-        layers.
-
-        This weight and bias initializer uses the same approach as in
-        Chapter 1, and is included for purposes of comparison.  It
-        will usually be better to use the default weight initializer
-        instead.
-
-        """
-        self.biases = [np.random.randn(y, 1) for y in self.sizes[1:]]
-        self.weights = [np.random.randn(y, x)
-                        for x, y in zip(self.sizes[:-1], self.sizes[1:])]
+        self.cost=cost
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
@@ -89,10 +50,8 @@ class Network(object):
         return a
 
     def train(self, training_data, epochs, mini_batch_size, eta, lmbda = 0.0):
-
         training_data = list(training_data)
         n = len(training_data)
-
         for j in range(epochs):
             random.shuffle(training_data)
             mini_batches = [
@@ -102,8 +61,7 @@ class Network(object):
                 self.update_mini_batch( mini_batch,
                                         eta, lmbda,
                                         len(training_data))
-
-            print("Epoch %s training complete" % j)
+            print(f"Epoch {j + 1}")
 
     def update_mini_batch(self, mini_batch, eta, lmbda, n):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
@@ -142,7 +100,6 @@ class Network(object):
     def evaluate(self, data):
         results = [(np.argmax(self.feedforward(x)), 
                     np.argmax(y)) for (x, y) in data]
-
         total_correct = sum(int(x == y) for (x, y) in results)
         return total_correct
 
@@ -156,7 +113,7 @@ class Network(object):
             a = self.feedforward(x)
             if convert: y = vectorized_result(y)
             cost += self.cost.fn(a, y)/len(data)
-            cost += 0.5*(lmbda/len(data))*sum(np.linalg.norm(w)**2 for w in self.weights) # '**' - to the power of.
+            cost += 0.5*(lmbda/len(data))*sum(np.linalg.norm(w)**2 for w in self.weights)
         return cost
 
     def save(self, filename):
@@ -177,11 +134,3 @@ def load(filename):
     net.weights = [np.array(w) for w in data["weights"]]
     net.biases = [np.array(b) for b in data["biases"]]
     return net
-
-def sigmoid(z):
-    """The sigmoid function."""
-    return 1.0/(1.0+np.exp(-z))
-
-def sigmoid_prime(z):
-    """Derivative of the sigmoid function."""
-    return sigmoid(z)*(1-sigmoid(z))
