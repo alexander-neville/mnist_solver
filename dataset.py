@@ -6,39 +6,6 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-def display_one_character(character):
-    plt.subplot(1, 1, 1)
-    plt.imshow(character, cmap=plt.get_cmap('gray'))
-    plt.show()
-
-def load_data():
-
-
-    if os.path.exists("./data/mnist_expanded.pkl.gz"):
-        f = gzip.open('./data/mnist_expanded.pkl.gz', 'rb')
-    elif os.path.exists("./data/mnist.pkl.gz"):
-        f = gzip.open('./data/mnist.pkl.gz', 'rb')
-    else:
-        exit()
-
-
-    tr_d, va_d, te_d = pickle.load(f, encoding="latin1")
-    f.close()
-
-    training_inputs = [np.reshape(x, (784, 1)) for x in tr_d[0]]
-    training_results = [vectorized_result(y) for y in tr_d[1]]
-    training_data = [[x, y] for (x, y) in zip(training_inputs, training_results)]
-
-    validation_inputs = [np.reshape(x, (784, 1)) for x in va_d[0]]
-    validation_results = [vectorized_result(y) for y in va_d[1]]
-    validation_data = [[x, y] for (x, y) in zip(validation_inputs, validation_results)]
-
-    test_inputs = [np.reshape(x, (784, 1)) for x in te_d[0]]
-    test_results = [vectorized_result(y) for y in te_d[1]]
-    test_data = [[x, y] for (x, y) in zip(test_inputs, test_results)]
-
-    return (training_data, validation_data, test_data)
-
 def vectorized_result(j):
     e = np.zeros((10, 1))
     e[j] = 1.0
@@ -48,16 +15,48 @@ def integer_result(j):
     e = np.argmax(j)
     return e
 
+def display_one_character(character):
+    plt.subplot(1, 1, 1)
+    plt.imshow(character, cmap=plt.get_cmap('gray'))
+    plt.show()
+
+def invert_numbers(samples):
+    threshold = np.full((784,1), 1.0)
+    for i in range(len(samples)):
+        samples[i][0] = np.subtract(threshold, samples[i][0])
+
+def display_characters(characters):
+    for i in range(60):
+        plt.subplot(10,6,i+1, frame_on=False)
+        plt.axis("off")
+        current_char = characters[i][0].reshape(28, 28)
+        plt.imshow(current_char, cmap=plt.get_cmap('gray'))
+    plt.show()
+
+def load_data():
+
+    if os.path.exists("./data/mnist_expanded.pkl.gz"):
+        f = gzip.open('./data/mnist_expanded.pkl.gz', 'rb')
+    elif os.path.exists("./data/mnist.pkl.gz"):
+        f = gzip.open('./data/mnist.pkl.gz', 'rb')
+    else:
+        exit()
+
+    datasets = pickle.load(f, encoding="latin1")
+    f.close()
+    return datasets
+
+
 def expand_dataset():
     if not os.path.exists("./data/mnist_expanded.pkl.gz"):
         f = gzip.open("./data/mnist.pkl.gz", 'rb')
         training_data, validation_data, test_data = pickle.load(f, encoding="latin1")
         f.close()
-        expanded_training_pairs = []
+        expanded_training_data = []
         j = 0 # counter
-        for x, y in zip(training_data[0], training_data[1]):
-            expanded_training_pairs.append((x, y))
-            image = np.reshape(x, (-1, 28))
+        for sample in training_data:
+            expanded_training_data.append(sample)
+            image = np.reshape(sample[0], (-1, 28))
             j += 1
             if j % 1000 == 0: print("Expanding image number", j)
             for d, axis, index_position, index in [
@@ -70,10 +69,10 @@ def expand_dataset():
                     new_img[index, :] = np.zeros(28)
                 else: 
                     new_img[:, index] = np.zeros(28)
-                expanded_training_pairs.append((np.reshape(new_img, 784), y))
-        random.shuffle(expanded_training_pairs)
-        expanded_training_data = [list(d) for d in zip(*expanded_training_pairs)]
+                expanded_training_data.append([np.reshape(new_img, (784, 1)), sample[1]])
+        random.shuffle(expanded_training_data)
         print("Saving expanded data. This may take a few minutes.")
         f = gzip.open("./data/mnist_expanded.pkl.gz", "w")
         pickle.dump((expanded_training_data, validation_data, test_data), f)
         f.close()
+        print("done!")

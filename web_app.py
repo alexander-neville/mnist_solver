@@ -1,7 +1,7 @@
 from flask import Flask, session, json, render_template, request, redirect, url_for, abort, flash, get_flashed_messages, jsonify
 import random
 import numpy as np
-from handle_data import display_one_character
+from dataset import display_one_character
 from main import invert_numbers
 import network
 
@@ -22,9 +22,8 @@ def process_drawing():
     print(dataset)
     invert_numbers(dataset)
     inputs = [x[0] for x in dataset]
-    prediction = nn.predict(inputs)[0]
-    print(prediction)
-    return jsonify({"prediction": int(prediction)})
+    prediction = int(nn.predict(inputs)[0])
+    return jsonify({"prediction": prediction})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)
