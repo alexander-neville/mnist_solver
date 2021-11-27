@@ -15,5 +15,5 @@ This repository contains a simple web application which maps a canvas on the fro
 
 This neural network implementation is based on the maths laid out in Michael Nielsen's book on the subject. I forked one of the source files from a repository implementing these principles and adapted it for my requirements.
 
-[Michael Nielsen's book on Neural Networks](http://neuralnetworksanddeeplearning.com/)
+[Michael Nielsen's book on Neural Networks](http://neuralnetworksanddeeplearning.com/)  
 [MichalDanielDobrzanski/DeepLearningPython](https://github.com/MichalDanielDobrzanski/DeepLearningPython)
